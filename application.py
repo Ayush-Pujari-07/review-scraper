@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
 import pymongo
 
-application = Flask(__name__) # initializing a flask app
+application = Flask(__name__,template_folder='templates') # initializing a flask app
 app=application
 
 @app.route('/',methods=['GET'])  # route to display the home page
@@ -71,10 +71,13 @@ def index():
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
                 reviews.append(mydict)
-            client = pymongo.MongoClient("mongodb+srv://testmongo:143ayush@cluster1.lqic7ni.mongodb.net/?retryWrites=true&w=majority")
+
+            # Create MongoDB connection
+            client = pymongo.MongoClient("mongodb+srv://testmongo:12345@cluster1.lqic7ni.mongodb.net/?retryWrites=true&w=majority")
             db = client['review_scrap']
             review_col = db['review_scrap_data']
             review_col.insert_many(reviews)
+            
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
             print('The Exception message is: ',e)
